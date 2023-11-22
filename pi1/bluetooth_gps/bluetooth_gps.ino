@@ -24,6 +24,8 @@ TinyGPSPlus gps;
 Adafruit_BMP280 bmp;
 Adafruit_MPU6050 mpu;
 
+char charVal[10];  
+
 const char LED= 2;
 const char turnON ='a';
 const char turnOFF ='b';
@@ -302,136 +304,221 @@ void setup() {
 
 }
 
-void loop() {
- char message;
- 
- if (SerialBT.available()) {
-    listDir(SD, "/", 0);
-    createDir(SD, "/mydir");
-    listDir(SD, "/", 0);
-    removeDir(SD, "/mydir");
-    listDir(SD, "/", 2);
-    writeFile(SD, "/hello.txt", "Hello ");
-    appendFile(SD, "/hello.txt", "World!\n");
-    readFile(SD, "/hello.txt");
-    deleteFile(SD, "/foo.txt");
-    renameFile(SD, "/hello.txt", "/foo.txt");
-    readFile(SD, "/foo.txt");
-    testFileIO(SD, "/test.txt");
-    Serial.printf("Total space: %lluMB\n", SD.totalBytes() / (1024 * 1024));
-    Serial.printf("Used space: %lluMB\n", SD.usedBytes() / (1024 * 1024));
-    message=SerialBT.read();
+void loop()
+{
+  char message;
+
+  if (SerialBT.available())
+  {
+    message = SerialBT.read();
     Serial.write(message);
-   if(message==turnON){
+    if (message == turnON)
+    {
       Serial.println(" :LED Turned ON");
-      SerialBT.println("LED Turned ON");   
-      digitalWrite(LED, HIGH);      //Turn LED ON
-    while(1){ 
-      message=SerialBT.read();
-      Serial.write(message);
-      if (Serial2.available() > 0) {
-        SerialBT.print(F("Temperature = "));
-        SerialBT.print(bmp.readTemperature());
-        SerialBT.println(" *C");
+      SerialBT.println("LED Turned ON");
+      digitalWrite(LED, HIGH); // Turn LED ON
+      while (1)
+      {
+        message = SerialBT.read();
+        Serial.write(message);
+        if (Serial2.available() > 0)
+        {
+          appendFile(SD, "/teste.txt", "Hello ");
+          SerialBT.print("Temperature = ");
+          appendFile(SD, "/teste.txt", "Temperature = ");
+          SerialBT.print(bmp.readTemperature());
+          dtostrf(bmp.readTemperature(), 4, 3, charVal);
+          appendFile(SD, "/teste.txt", charVal);
+          SerialBT.println(" *C");
+          appendFile(SD, "/teste.txt", " *C");
 
-        SerialBT.print(F("Pressure = "));
-        SerialBT.print(bmp.readPressure());
-        SerialBT.println(" Pa");
+          SerialBT.print("Pressure = ");
+          appendFile(SD, "/teste.txt", "Pressure = ");
 
-        SerialBT.print(F("Approx altitude = "));
-        SerialBT.print(bmp.readAltitude(1013.25)); /* Adjusted to local forecast! */
-        SerialBT.println(" m");
+          SerialBT.print(bmp.readPressure());
+          dtostrf(bmp.readTemperature(), 4, 3, charVal);
+          appendFile(SD, "/teste.txt", charVal);
+          SerialBT.println(" Pa");
+          appendFile(SD, "/teste.txt", " Pa");
 
-        SerialBT.println("--------------------");
+          SerialBT.print("Approx altitude = ");
+          appendFile(SD, "/teste.txt", "Approx altitude = ");
+          SerialBT.print(bmp.readAltitude(1013.25));   
+          dtostrf(bmp.readAltitude(1013.25), 4, 3, charVal);
+                    /* Adjusted to local forecast! */
+          appendFile(SD, "/teste.txt", charVal ); /* Adjusted to local forecast! );*/
+          SerialBT.println(" m");
+          appendFile(SD, "/teste.txt", " m");
 
-        sensors_event_t a, g, temp;
-        mpu.getEvent(&a, &g, &temp);
+          SerialBT.println("--------------------");
+          appendFile(SD, "/teste.txt", "--------------------");
 
-        /* Print out the values */
-        SerialBT.print("Acceleration X: ");
-        SerialBT.print(a.acceleration.x);
-        SerialBT.print(", Y: ");
-        SerialBT.print(a.acceleration.y);
-        SerialBT.print(", Z: ");
-        SerialBT.print(a.acceleration.z);
-        SerialBT.println(" m/s^2");
+          sensors_event_t a, g, temp;
+          mpu.getEvent(&a, &g, &temp);
 
-        SerialBT.print("Rotation X: ");
-        SerialBT.print(g.gyro.x);
-        SerialBT.print(", Y: ");
-        SerialBT.print(g.gyro.y);
-        SerialBT.print(", Z: ");
-        SerialBT.print(g.gyro.z);
-        SerialBT.println(" rad/s");
+          /* Print out the values */
+          SerialBT.print("Acceleration X: ");
+          appendFile(SD, "/teste.txt", "Acceleration X: ");
+          SerialBT.print(a.acceleration.x);
+          dtostrf(a.acceleration.x, 4, 3, charVal);
+          appendFile(SD, "/teste.txt", charVal);
+          SerialBT.print(", Y: ");
+          appendFile(SD, "/teste.txt", ", Y: ");
+          SerialBT.print(a.acceleration.y);
+          dtostrf(a.acceleration.y, 4, 3, charVal);
 
-        SerialBT.print("Temperature: ");
-        SerialBT.print(temp.temperature);
-        SerialBT.println(" degC");
+          appendFile(SD, "/teste.txt", charVal);
+          SerialBT.print(", Z: ");
+          appendFile(SD, "/teste.txt", ", Z: ");
+          SerialBT.print(a.acceleration.z);
+          dtostrf(a.acceleration.y, 4, 3, charVal);
+          appendFile(SD, "/teste.txt", charVal);
+          SerialBT.println(" m/s^2");
+          appendFile(SD, "/teste.txt", " m/s^2");
 
-        SerialBT.println("");
+          SerialBT.print("Rotation X: ");
+          appendFile(SD, "/teste.txt", "Rotation X: ");
+          SerialBT.print(g.gyro.x);
+          dtostrf(g.gyro.x, 4, 3, charVal);
+          appendFile(SD, "/teste.txt", charVal);
+          SerialBT.print(", Y: ");
+          appendFile(SD, "/teste.txt", ", Y: ");
+          SerialBT.print(g.gyro.y);
+          dtostrf(g.gyro.y, 4, 3, charVal);
+          appendFile(SD, "/teste.txt", charVal);
+          SerialBT.print(", Z: ");
+          appendFile(SD, "/teste.txt", ", Z: ");
+          SerialBT.print(g.gyro.z);
+          dtostrf(g.gyro.z, 4, 3, charVal);
+          appendFile(SD, "/teste.txt", charVal);
+          SerialBT.println(" rad/s");
+          appendFile(SD, "/teste.txt", " rad/s");
 
-        if (gps.encode(Serial2.read())) {
-          if (gps.location.isValid()) {
-            SerialBT.print(F("- latitude: "));
-            SerialBT.println(gps.location.lat());
+          SerialBT.print("Temperature: ");
+          appendFile(SD, "/teste.txt", "Temperature: ");
+          SerialBT.print(temp.temperature);
+          dtostrf(g.gyro.z, 4, 3, charVal);
+          appendFile(SD, "/teste.txt", charVal);
+          SerialBT.println(" degC");
+          appendFile(SD, "/teste.txt", " degC");
 
-            SerialBT.print(F("- longitude: "));
-            SerialBT.println(gps.location.lng());
+          SerialBT.println("");
+          appendFile(SD, "/teste.txt", "");
 
-            SerialBT.print(F("- altitude: "));
-            if (gps.altitude.isValid())
-              SerialBT.println(gps.altitude.meters());
+          if (gps.encode(Serial2.read()))
+          {
+            if (gps.location.isValid())
+            {
+              SerialBT.print("- latitude: ");
+              appendFile(SD, "/teste.txt", "-latitude : ");
+              SerialBT.println(gps.location.lat());
+              appendFile(SD, "/teste.txt", "gps.location.lat()");
+
+              SerialBT.print("- longitude: ");
+              appendFile(SD, "/teste.txt", "-longitude : ");
+              SerialBT.println(gps.location.lng());
+              dtostrf(g.gyro.z, 4, 3, charVal);
+              appendFile(SD, "/teste.txt", charVal);
+
+              SerialBT.print("- altitude: ");
+              appendFile(SD, "/teste.txt", "-altitude : ");
+              if (gps.altitude.isValid())
+              {
+                SerialBT.println(gps.altitude.meters());
+                dtostrf(g.gyro.z, 4, 3, charVal);
+                appendFile(SD, "/teste.txt", charVal);
+              }
+                else
+                {
+                  SerialBT.println("INVALID");
+                  appendFile(SD, "/teste.txt", "INVALID");
+                }
+            }
             else
-              SerialBT.println(F("INVALID"));
-          } else {
-            SerialBT.println(F("- location: INVALID"));
-          }
+            {
+              SerialBT.println("- location: INVALID");
+              appendFile(SD, "/teste.txt", "- location: INVALID");
+            }
 
-          SerialBT.print(F("- speed: "));
-          if (gps.speed.isValid()) {
-            SerialBT.print(gps.speed.kmph());
-            SerialBT.println(F(" km/h"));
-          } else {
-            SerialBT.println(F("INVALID"));
-          }
+            SerialBT.print("- speed: ");
+            appendFile(SD, "/teste.txt", "-speed : ");
+            if (gps.speed.isValid())
+            {
+              SerialBT.print(gps.speed.kmph());
+              dtostrf(g.gyro.z, 4, 3, charVal);
+              appendFile(SD, "/teste.txt", charVal);
+              SerialBT.println(" km/h");
+              appendFile(SD, "/teste.txt", " km/h");
+            }
+            else
+            {
+              SerialBT.println("INVALID");
+              appendFile(SD, "/teste.txt", "INVALID");
+            }
 
-          SerialBT.print(F("- GPS date&time: "));
-          if (gps.date.isValid() && gps.time.isValid()) {
-            SerialBT.print(gps.date.year());
-            SerialBT.print(F("-"));
-            SerialBT.print(gps.date.month());
-            SerialBT.print(F("-"));
-            SerialBT.print(gps.date.day());
-            SerialBT.print(F(" "));
-            SerialBT.print(gps.time.hour());
-            SerialBT.print(F(":"));
-            SerialBT.print(gps.time.minute());
-            SerialBT.print(F(":"));
-            SerialBT.println(gps.time.second());
-          } else {
-            SerialBT.println(F("INVALID"));
-          }
+            SerialBT.print("- GPS date&time: ");
+            appendFile(SD, "/teste.txt", "-GPS date & time : ");
+            if (gps.date.isValid() && gps.time.isValid())
+            {
+              SerialBT.print(gps.date.year());
+              dtostrf(gps.date.year(), 4, 3, charVal);
+              appendFile(SD, "/teste.txt", charVal);
+              SerialBT.print("-");
+              appendFile(SD,"/teste.txt","-");
+              SerialBT.print(gps.date.month());
+              dtostrf(gps.date.month(), 4, 3, charVal);
+              appendFile(SD,"/teste.txt", charVal);
+              SerialBT.print("-");
+              appendFile(SD,"/teste.txt","-");
+              SerialBT.print(gps.date.day());
+              dtostrf(gps.date.day(), 4, 3, charVal);
+              appendFile(SD,"/teste.txt", charVal);
+              SerialBT.print(" ");
+              appendFile(SD,"/teste.txt", " ");
+              SerialBT.print(gps.time.hour());
+              dtostrf(gps.time.hour(), 4, 3, charVal);
+              appendFile(SD,"/teste.txt", charVal);
+              SerialBT.print(":");
+              appendFile(SD,"/teste.txt",":");
+              SerialBT.print(gps.time.minute());
+              dtostrf(gps.time.minute(), 4, 3, charVal);
+              appendFile(SD,"/teste.txt", charVal);
+              SerialBT.print(":");
+              dtostrf(g.gyro.z, 4, 3, charVal);
+              appendFile(SD,"/teste.txt",":");
+              SerialBT.println(gps.time.second());
+              dtostrf(gps.time.second(), 4, 3, charVal);
+              appendFile(SD,"/teste.txt",charVal);
+            }
+            else
+            {
+              SerialBT.println("INVALID");
+              appendFile(SD, "/teste.txt", "INVALID");
+            }
 
-          SerialBT.println();
+            SerialBT.println();
+            appendFile(SD, "/teste.txt", "");
+          }
         }
+
+        if (millis() > 5000 && gps.charsProcessed() < 10)
+          SerialBT.println("No GPS data received: check wiring");
+          appendFile(SD, "/teste.txt", "No GPS data received: check wiring");
+
+        if (message == turnOFF)
+        {
+          break;
+        }
+
+        delay(1000);
       }
-
-      if (millis() > 5000 && gps.charsProcessed() < 10)
-        SerialBT.println(F("No GPS data received: check wiring"));
-
-      if(message==turnOFF){
-        break;
-      }
-
-      delay(1000);
     }
-   }
 
- 
-   else{
-     Serial.println(" :Invalid Input"); 
-     SerialBT.println("Invalid Input");
-   } 
- }
- delay(20);
+    else
+    {
+      Serial.println(" :Invalid Input");
+      SerialBT.println("Invalid Input");
+    }
+  }
+  delay(20);
 }

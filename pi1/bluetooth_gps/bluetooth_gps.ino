@@ -112,7 +112,7 @@ void loop()
     Serial.write(message);
     if (message == turnON)
     {
-      writeFile(SD, "/teste.txt", "teste");
+      writeFile(SD, "/teste.txt", "inicio\n");
       while (1)
       {
         message = SerialBT.read();
@@ -125,33 +125,31 @@ void loop()
             if (gps.location.isValid())
             {
               SerialBT.print(gps.location.lat());
-              dtostrf(gps.location.lat(), 4, 3, charVal);
+              dtostrf(gps.location.lat(), 4, 3, charVal); //escrita no arquivo
               appendFile(SD, "/teste.txt", charVal);
-
               SerialBT.print(",");
               appendFile(SD, "/teste.txt", ",");
               SerialBT.println(gps.location.lng());
-              dtostrf(gps.location.lng(), 4, 3, charVal);
-              appendFile(SD, "/teste.txt", charVal);
-
+              dtostrf(gps.location.lng(), 4, 3, charVal); 
+              appendFile(SD, "/teste.txt", charVal); // prints no terminal bt
               SerialBT.print(",");
               appendFile(SD, "/teste.txt", ",");
+
               if (gps.altitude.isValid())
               {
                 SerialBT.println(gps.altitude.meters());
                 dtostrf(gps.altitude.meters(), 4, 3, charVal);
                 appendFile(SD, "/teste.txt", charVal);
+                appendFile(SD, "/teste.txt", '\n');
               }
               else
               {
                 SerialBT.println("INVALID");
-                appendFile(SD, "/teste.txt", "INVALID");
               }
             }
             else
             {
               SerialBT.println("- location: INVALID");
-              appendFile(SD, "/teste.txt", "- location: INVALID");
             }
 
             SerialBT.print("- speed: ");

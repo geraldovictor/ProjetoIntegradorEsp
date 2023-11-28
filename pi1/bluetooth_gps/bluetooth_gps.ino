@@ -112,7 +112,7 @@ void loop()
     Serial.write(message);
     if (message == turnON)
     {
-      writeFile(SD, "/teste.txt", "inicio\n");
+      writeFile(SD, "/teste.txt", "");
       while (1)
       {
         message = SerialBT.read();
@@ -122,7 +122,7 @@ void loop()
 
           if (gps.encode(Serial2.read()))
           {
-            if (gps.location.isValid())
+            if (gps.location.isValid() && gps.altitude.isValid())
             {
               SerialBT.print(gps.location.lat());
               dtostrf(gps.location.lat(), 4, 3, charVal); //escrita no arquivo
@@ -134,81 +134,15 @@ void loop()
               appendFile(SD, "/teste.txt", charVal); // prints no terminal bt
               SerialBT.print(",");
               appendFile(SD, "/teste.txt", ",");
-
-              if (gps.altitude.isValid())
-              {
-                SerialBT.println(gps.altitude.meters());
-                dtostrf(gps.altitude.meters(), 4, 3, charVal);
-                appendFile(SD, "/teste.txt", charVal);
-                appendFile(SD, "/teste.txt", '\n');
-              }
-              else
-              {
-                SerialBT.println("INVALID");
-              }
+              SerialBT.println(gps.altitude.meters());
+              dtostrf(gps.altitude.meters(), 4, 3, charVal);
+              appendFile(SD, "/teste.txt", charVal);
+              appendFile(SD, "/teste.txt", "\n");
             }
             else
             {
-              SerialBT.println("- location: INVALID");
+              SerialBT.println("Locatizacao ou altitude inválidas");
             }
-
-            SerialBT.print("- speed: ");
-            appendFile(SD, "/teste.txt", "-speed : ");
-            if (gps.speed.isValid())
-            {
-              SerialBT.print(gps.speed.kmph());
-              dtostrf(gps.speed.kmph(), 4, 3, charVal);
-              appendFile(SD, "/teste.txt", charVal);
-              SerialBT.println(" km/h");
-              appendFile(SD, "/teste.txt", " km/h");
-            }
-            else
-            {
-              SerialBT.println("INVALID");
-              appendFile(SD, "/teste.txt", "INVALID");
-            }
-
-            SerialBT.print("- GPS date&time: ");
-            appendFile(SD, "/teste.txt", "-GPS date & time : ");
-            if (gps.date.isValid() && gps.time.isValid())
-            {
-              SerialBT.print(gps.date.year());
-              dtostrf(gps.date.year(), 4, 3, charVal);
-              appendFile(SD, "/teste.txt", charVal);
-              SerialBT.print("-");
-              appendFile(SD, "/teste.txt", "-");
-              SerialBT.print(gps.date.month());
-              dtostrf(gps.date.month(), 4, 3, charVal);
-              appendFile(SD, "/teste.txt", charVal);
-              SerialBT.print("-");
-              appendFile(SD, "/teste.txt", "-");
-              SerialBT.print(gps.date.day());
-              dtostrf(gps.date.day(), 4, 3, charVal);
-              appendFile(SD, "/teste.txt", charVal);
-              SerialBT.print(" ");
-              appendFile(SD, "/teste.txt", " ");
-              SerialBT.print(gps.time.hour());
-              dtostrf(gps.time.hour(), 4, 3, charVal);
-              appendFile(SD, "/teste.txt", charVal);
-              SerialBT.print(":");
-              appendFile(SD, "/teste.txt", ":");
-              SerialBT.print(gps.time.minute());
-              dtostrf(gps.time.minute(), 4, 3, charVal);
-              appendFile(SD, "/teste.txt", charVal);
-              SerialBT.print(":");
-              appendFile(SD, "/teste.txt", ":");
-              SerialBT.println(gps.time.second());
-              dtostrf(gps.time.second(), 4, 3, charVal);
-              appendFile(SD, "/teste.txt", charVal);
-            }
-            else
-            {
-              SerialBT.println("INVALID");
-              appendFile(SD, "/teste.txt", "INVALID");
-            }
-
-            SerialBT.println();
-            appendFile(SD, "/teste.txt", "");
           }
         }
 

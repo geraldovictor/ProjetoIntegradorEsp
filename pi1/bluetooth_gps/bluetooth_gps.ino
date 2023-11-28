@@ -27,16 +27,16 @@ void writeFile(fs::FS &fs, const char *path, const char *message)
   File file = fs.open(path, FILE_WRITE);
   if (!file)
   {
-    Serial.println("Failed to open file for writing");
+    SerialBT.println("Failed to open file for writing");
     return;
   }
   if (file.print(message))
   {
-    Serial.println("File written");
+    SerialBT.println("File written");
   }
   else
   {
-    Serial.println("Write failed");
+    SerialBT.println("Write failed");
   }
   file.close();
 }
@@ -48,16 +48,16 @@ void appendFile(fs::FS &fs, const char *path, const char *message)
   File file = fs.open(path, FILE_APPEND);
   if (!file)
   {
-    Serial.println("Failed to open file for appending");
+    SerialBT.println("Failed to open file for appending");
     return;
   }
   if (file.print(message))
   {
-    Serial.println("Message appended");
+    SerialBT.println("Message appended");
   }
   else
   {
-    Serial.println("Append failed");
+    SerialBT.println("Append failed");
   }
   file.close();
 }
@@ -66,39 +66,39 @@ void setup()
 {
   Serial.begin(9600);
   Serial2.begin(GPS_BAUDRATE);
-  Serial.println("$PMTK220,200*2C");
-  Serial.println(F("ESP32 - GPS module"));
+  SerialBT.println("$PMTK220,200*2C");
+  SerialBT.println(F("ESP32 - GPS module"));
   SerialBT.begin("ESP32test");
 
   if (!SD.begin(5))
   {
-    Serial.println("Card Mount Failed");
+    SerialBT.println("Card Mount Failed");
     return;
   }
   uint8_t cardType = SD.cardType();
 
   if (cardType == CARD_NONE)
   {
-    Serial.println("No SD card attached");
+    SerialBT.println("No SD card attached");
     return;
   }
 
   Serial.print("SD Card Type: ");
   if (cardType == CARD_MMC)
   {
-    Serial.println("MMC");
+    SerialBT.println("MMC");
   }
   else if (cardType == CARD_SD)
   {
-    Serial.println("SDSC");
+    SerialBT.println("SDSC");
   }
   else if (cardType == CARD_SDHC)
   {
-    Serial.println("SDHC");
+    SerialBT.println("SDHC");
   }
   else
   {
-    Serial.println("UNKNOWN");
+    SerialBT.println("UNKNOWN");
   }
 }
 
@@ -140,28 +140,20 @@ void loop()
               appendFile(SD, "/teste.txt", "\n");
             }
             else
-            {
               SerialBT.println("Locatizacao ou altitude inválidas");
-            }
           }
         }
 
         if (millis() > 5000 && gps.charsProcessed() < 10)
-        {
           SerialBT.println("No GPS data received: check wiring");
-          appendFile(SD, "/teste.txt", "No GPS data received: check wiring");
-        }
 
         if (message == turnOFF)
-        {
           break;
-        }
       }
     }
 
     else
     {
-      Serial.println(" :Invalid Input");
       SerialBT.println("Invalid Input");
     }
   }

@@ -14,7 +14,7 @@
 
 #define GPS_BAUDRATE 9600 // The default baudrate of NEO-6M is 9600
 
-char charVal[10]; 
+char charVal[10];
 TinyGPSPlus gps; // the TinyGPS++ object
 BluetoothSerial SerialBT;
 const char turnON = 'a';
@@ -100,6 +100,7 @@ void setup()
   {
     SerialBT.println("UNKNOWN");
   }
+  writeFile(SD, "/teste.txt", "");
 }
 
 void loop()
@@ -110,56 +111,51 @@ void loop()
   {
     message = SerialBT.read();
     Serial.write(message);
-    if (message == turnON)
+  }
+  while (message == turnON)
+  {
+    if (Serial2.available() > 0)
     {
-      writeFile(SD, "/teste.txt", "");
-      while (1)
+
+      if (gps.encode(Serial2.read()))
       {
-        message = SerialBT.read();
-        Serial.write(message);
-        if (Serial2.available() > 0)
+        if (gps.location.isValid() && gps.altitude.isValid() && gps.speed.isValid())
         {
-
-          if (gps.encode(Serial2.read()))
-          {
-            if (gps.location.isValid() && gps.altitude.isValid() && gps.speed.isValid())
-            {
-              SerialBT.print(gps.location.lat());
-              dtostrf(gps.location.lat(), 4, 3, charVal); //escrita no arquivo
-              appendFile(SD, "/teste.txt", charVal);
-              SerialBT.print(",");
-              appendFile(SD, "/teste.txt", ",");
-              SerialBT.println(gps.location.lng());
-              dtostrf(gps.location.lng(), 4, 3, charVal); 
-              appendFile(SD, "/teste.txt", charVal); // prints no terminal bt
-              SerialBT.print(",");
-              appendFile(SD, "/teste.txt", ",");
-              SerialBT.println(gps.altitude.meters());
-              dtostrf(gps.altitude.meters(), 4, 3, charVal);
-              SerialBT.print(",");
-              appendFile(SD, "/teste.txt", ",");
-              appendFile(SD, "/teste.txt", charVal);
-              SerialBT.print(gps.speed.kmph());
-              dtostrf(gps.speed.kmph(), 4, 3, charVal);
-              appendFile(SD, "/teste.txt", charVal);
-              appendFile(SD, "/teste.txt", "\n");
-            }
-            else
-              SerialBT.println("Locatizacao ou altitude inválidas");
-          }
+          SerialBT.print(gps.location.lat());
+          dtostrf(gps.location.lat(), 4, 3, charVal); // escrita no arquivo
+          appendFile(SD, "/teste.txt", charVal);
+          SerialBT.print(",");
+          appendFile(SD, "/teste.txt", ",");
+          SerialBT.println(gps.location.lng());
+          dtostrf(gps.location.lng(), 4, 3, charVal);
+          appendFile(SD, "/teste.txt", charVal); // prints no terminal bt
+          SerialBT.print(",");
+          appendFile(SD, "/teste.txt", ",");
+          SerialBT.println(gps.altitude.meters());
+          dtostrf(gps.altitude.meters(), 4, 3, charVal);
+          appendFile(SD, "/teste.txt", charVal);
+          SerialBT.print(",");
+          appendFile(SD, "/teste.txt", ",");
+          SerialBT.print(gps.speed.kmph());
+          dtostrf(gps.speed.kmph(), 4, 3, charVal);
+          appendFile(SD, "/teste.txt", charVal);
+          appendFile(SD, "/teste.txt", "\n");
         }
-
-        if (millis() > 5000 && gps.charsProcessed() < 10)
-          SerialBT.println("No GPS data received: check wiring");
-
-        if (message == turnOFF)
-          break;
+        else
+          SerialBT.println("Locatizacao, altitude, velocidade inválidas");
       }
     }
 
-    else
+    if (millis() > 5000 && gps.charsProcessed() < 10)
+      SerialBT.println("No GPS data received: check wiring");
+
+    if (SerialBT.available())
     {
-      SerialBT.println("Invalid Input");
+      if( SerialBT.read() == turnOFF)
+      {
+        message = turnOFF;
+        Serial.write(message);
+      }
     }
   }
 }

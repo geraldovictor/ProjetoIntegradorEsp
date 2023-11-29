@@ -122,7 +122,7 @@ void loop()
 
           if (gps.encode(Serial2.read()))
           {
-            if (gps.location.isValid() && gps.altitude.isValid())
+            if (gps.location.isValid() && gps.altitude.isValid() && gps.speed.isValid())
             {
               SerialBT.print(gps.location.lat());
               dtostrf(gps.location.lat(), 4, 3, charVal); //escrita no arquivo
@@ -136,6 +136,11 @@ void loop()
               appendFile(SD, "/teste.txt", ",");
               SerialBT.println(gps.altitude.meters());
               dtostrf(gps.altitude.meters(), 4, 3, charVal);
+              SerialBT.print(",");
+              appendFile(SD, "/teste.txt", ",");
+              appendFile(SD, "/teste.txt", charVal);
+              SerialBT.print(gps.speed.kmph());
+              dtostrf(gps.speed.kmph(), 4, 3, charVal);
               appendFile(SD, "/teste.txt", charVal);
               appendFile(SD, "/teste.txt", "\n");
             }

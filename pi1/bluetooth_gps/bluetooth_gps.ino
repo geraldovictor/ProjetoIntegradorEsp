@@ -6,6 +6,10 @@
  * For more detail (instruction and wiring diagram), visit https://esp32io.com/tutorials/esp32-gps
  */
 
+/* outros links :
+https://www.arduino.cc/reference/en/language/variables/data-types/stringobject/
+*/
+
 #include <TinyGPS++.h>
 #include "BluetoothSerial.h"
 #include "FS.h"
@@ -121,14 +125,16 @@ void loop()
       {
         if (gps.location.isValid() && gps.altitude.isValid() && gps.speed.isValid())
         {
+          SerialBT.print(millis()+": ");
           SerialBT.print(gps.location.lat());
-          dtostrf(gps.location.lat(), 4, 3, charVal); // escrita no arquivo
+          appendFile(SD, "/teste.txt", String(millis())+": "); //escreve o instante 
+          dtostrf(gps.location.lat(), 4, 3, charVal); 
           appendFile(SD, "/teste.txt", charVal);
           SerialBT.print(",");
           appendFile(SD, "/teste.txt", ",");
           SerialBT.println(gps.location.lng());
           dtostrf(gps.location.lng(), 4, 3, charVal);
-          appendFile(SD, "/teste.txt", charVal); // prints no terminal bt
+          appendFile(SD, "/teste.txt", charVal); 
           SerialBT.print(",");
           appendFile(SD, "/teste.txt", ",");
           SerialBT.println(gps.altitude.meters());
@@ -142,7 +148,7 @@ void loop()
           appendFile(SD, "/teste.txt", "\n");
         }
         else
-          SerialBT.println("Locatizacao, altitude, velocidade inválidas");
+          SerialBT.println("Locatizacao, altitude ou velocidade inválidas");
       }
     }
 

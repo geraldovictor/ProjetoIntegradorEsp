@@ -142,7 +142,7 @@ void loop()
           appendFile(SD, "/teste.txt", "\n");
         }
         else
-          SerialBT.println("Locatizacao, altitude, velocidade inválidas");
+          SerialBT.println("Locatizacao, altitude ou velocidade inválidas");
       }
     }
 
@@ -151,11 +151,16 @@ void loop()
 
     if (SerialBT.available())
     {
+      appendFile(SD, "/teste.txt", "c: "); //escreve "c: {dados}" em todas as linhas do arquivo que foram escritas quando esp estava CONECTADA com bluetooth
       if( SerialBT.read() == turnOFF)
       {
         message = turnOFF;
         Serial.write(message);
       }
+    } 
+    else
+    {
+      appendFile(SD, "/teste.txt", "d: "); //escreve "d: {dados}" em todas as linhas do arquivo que foram escritas quando esp estava DESCONECTADA com bluetooth
     }
   }
 }

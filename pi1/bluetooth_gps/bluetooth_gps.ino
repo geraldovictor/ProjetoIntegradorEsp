@@ -127,7 +127,9 @@ void loop()
         {
           SerialBT.print(millis()+": ");
           SerialBT.print(gps.location.lat());
-          appendFile(SD, "/teste.txt", String(millis())+": "); //escreve o instante 
+          dtostrf(millis(), 4, 3, charVal);
+          appendFile(SD, "/teste.txt", charVal); //escreve o instante 
+          appendFile(SD, "/teste.txt", ":"); //escreve o instante 
           dtostrf(gps.location.lat(), 4, 3, charVal); 
           appendFile(SD, "/teste.txt", charVal);
           SerialBT.print(",");

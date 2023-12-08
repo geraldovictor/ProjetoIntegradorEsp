@@ -21,7 +21,9 @@ https://www.arduino.cc/reference/en/language/variables/data-types/stringobject/
 char charVal[10];
 TinyGPSPlus gps; // the TinyGPS++ object
 BluetoothSerial SerialBT;
-const char turnON = 'a';
+const char turnONVoo1 = '1';
+const char turnONVoo2 = '2';
+const char turnONVoo3 = '3';
 const char turnOFF = 'b';
 
 void writeFile(fs::FS &fs, const char *path, const char *message)
@@ -104,7 +106,9 @@ void setup()
   {
     SerialBT.println("UNKNOWN");
   }
-  writeFile(SD, "/teste.txt", "");
+  writeFile(SD, "/voo1.txt", "");
+  writeFile(SD, "/voo2.txt", "");
+  writeFile(SD, "/voo3.txt", "");
 }
 
 void loop()
@@ -116,7 +120,7 @@ void loop()
     message = SerialBT.read();
     Serial.write(message);
   }
-  while (message == turnON)
+  while (message == turnONVoo1)
   {
     if (Serial2.available() > 0)
     {
@@ -125,29 +129,133 @@ void loop()
       {
         if (gps.location.isValid() && gps.altitude.isValid() && gps.speed.isValid())
         {
-          SerialBT.print(millis()+": ");
+          SerialBT.print("%lu:", millis()); // <- checar se funciona
           SerialBT.print(gps.location.lat());
           dtostrf(millis(), 4, 3, charVal);
-          appendFile(SD, "/teste.txt", charVal); //escreve o instante 
-          appendFile(SD, "/teste.txt", ":"); //escreve o instante 
+          appendFile(SD, "/voo1.txt", charVal); 
+          appendFile(SD, "/voo1.txt", ":"); 
           dtostrf(gps.location.lat(), 4, 3, charVal); 
-          appendFile(SD, "/teste.txt", charVal);
+          appendFile(SD, "/voo1.txt", charVal);
           SerialBT.print(",");
-          appendFile(SD, "/teste.txt", ",");
+          appendFile(SD, "/voo1.txt", ",");
           SerialBT.println(gps.location.lng());
           dtostrf(gps.location.lng(), 4, 3, charVal);
-          appendFile(SD, "/teste.txt", charVal); 
+          appendFile(SD, "/voo1.txt", charVal); 
           SerialBT.print(",");
-          appendFile(SD, "/teste.txt", ",");
+          appendFile(SD, "/voo1.txt", ",");
           SerialBT.println(gps.altitude.meters());
           dtostrf(gps.altitude.meters(), 4, 3, charVal);
-          appendFile(SD, "/teste.txt", charVal);
+          appendFile(SD, "/voo1.txt", charVal);
           SerialBT.print(",");
-          appendFile(SD, "/teste.txt", ",");
+          appendFile(SD, "/voo1.txt", ",");
           SerialBT.print(gps.speed.kmph());
           dtostrf(gps.speed.kmph(), 4, 3, charVal);
-          appendFile(SD, "/teste.txt", charVal);
-          appendFile(SD, "/teste.txt", "\n");
+          appendFile(SD, "/voo1.txt", charVal);
+          appendFile(SD, "/voo1.txt", "\n");
+        }
+        else
+          SerialBT.println("Locatizacao, altitude ou velocidade inválidas");
+      }
+    }
+
+    if (millis() > 5000 && gps.charsProcessed() < 10)
+      SerialBT.println("No GPS data received: check wiring");
+
+    if (SerialBT.available())
+    {
+      if( SerialBT.read() == turnOFF)
+      {
+        message = turnOFF;
+        Serial.write(message);
+      }
+    }
+  }
+
+  // Escreve dados do voo 2 em /voo2.txt
+  while (message == turnONVoo2)
+  {
+    if (Serial2.available() > 0)
+    {
+
+      if (gps.encode(Serial2.read()))
+      {
+        if (gps.location.isValid() && gps.altitude.isValid() && gps.speed.isValid())
+        {
+          SerialBT.print("%lu:", millis()); //<- checar se funciona
+          SerialBT.print(gps.location.lat());
+          dtostrf(millis(), 4, 3, charVal);
+          appendFile(SD, "/voo2.txt", charVal); 
+          appendFile(SD, "/voo2.txt", ":"); 
+          dtostrf(gps.location.lat(), 4, 3, charVal); 
+          appendFile(SD, "/voo2.txt", charVal);
+          SerialBT.print(",");
+          appendFile(SD, "/voo2.txt", ",");
+          SerialBT.println(gps.location.lng());
+          dtostrf(gps.location.lng(), 4, 3, charVal);
+          appendFile(SD, "/voo2.txt", charVal); 
+          SerialBT.print(",");
+          appendFile(SD, "/voo2.txt", ",");
+          SerialBT.println(gps.altitude.meters());
+          dtostrf(gps.altitude.meters(), 4, 3, charVal);
+          appendFile(SD, "/voo2.txt", charVal);
+          SerialBT.print(",");
+          appendFile(SD, "/voo2.txt", ",");
+          SerialBT.print(gps.speed.kmph());
+          dtostrf(gps.speed.kmph(), 4, 3, charVal);
+          appendFile(SD, "/voo2.txt", charVal);
+          appendFile(SD, "/voo2.txt", "\n");
+        }
+        else
+          SerialBT.println("Locatizacao, altitude ou velocidade inválidas");
+      }
+    }
+
+    if (millis() > 5000 && gps.charsProcessed() < 10)
+      SerialBT.println("No GPS data received: check wiring");
+
+    if (SerialBT.available())
+    {
+      if( SerialBT.read() == turnOFF)
+      {
+        message = turnOFF;
+        Serial.write(message);
+      }
+    }
+  }
+
+  // Escreve dados do voo 3 em /voo3.txt
+  while (message == turnONVoo3)
+  {
+    if (Serial2.available() > 0)
+    {
+
+      if (gps.encode(Serial2.read()))
+      {
+        if (gps.location.isValid() && gps.altitude.isValid() && gps.speed.isValid())
+        {
+          SerialBT.print("%lu:", millis()); //<- checar se funciona
+          SerialBT.print(gps.location.lat());
+          dtostrf(millis(), 4, 3, charVal);
+          appendFile(SD, "/voo3.txt", charVal); 
+          appendFile(SD, "/voo3.txt", ":"); 
+          dtostrf(gps.location.lat(), 4, 3, charVal); 
+          appendFile(SD, "/voo3.txt", charVal);
+          SerialBT.print(",");
+          appendFile(SD, "/voo3.txt", ",");
+          SerialBT.println(gps.location.lng());
+          dtostrf(gps.location.lng(), 4, 3, charVal);
+          appendFile(SD, "/voo3.txt", charVal); 
+          SerialBT.print(",");
+          appendFile(SD, "/voo3.txt", ",");
+          SerialBT.println(gps.altitude.meters());
+          dtostrf(gps.altitude.meters(), 4, 3, charVal);
+          appendFile(SD, "/voo3.txt", charVal);
+          SerialBT.print(",");
+          appendFile(SD, "/voo3.txt", ",");
+          SerialBT.print(gps.speed.kmph());
+          dtostrf(gps.speed.kmph(), 4, 3, charVal);
+          appendFile(SD, "/voo3.txt", charVal);
+          appendFile(SD, "/voo3.txt", "\n");
         }
         else
           SerialBT.println("Locatizacao, altitude ou velocidade inválidas");

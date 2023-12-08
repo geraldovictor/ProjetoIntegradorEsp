@@ -129,7 +129,9 @@ void loop()
       {
         if (gps.location.isValid() && gps.altitude.isValid() && gps.speed.isValid())
         {
-          SerialBT.print("%lu:", millis()); // <- checar se funciona
+          dtostrf(millis(), 4, 3, charVal);
+          SerialBT.print(charVal); //<- checar se funciona
+          SerialBT.print(":"); //<- checar se funciona
           SerialBT.print(gps.location.lat());
           dtostrf(millis(), 4, 3, charVal);
           appendFile(SD, "/voo1.txt", charVal); 
@@ -181,9 +183,10 @@ void loop()
       {
         if (gps.location.isValid() && gps.altitude.isValid() && gps.speed.isValid())
         {
-          SerialBT.print("%lu:", millis()); //<- checar se funciona
-          SerialBT.print(gps.location.lat());
           dtostrf(millis(), 4, 3, charVal);
+          SerialBT.print(charVal); //<- checar se funciona
+          SerialBT.print(":"); //<- checar se funciona
+          SerialBT.print(gps.location.lat());
           appendFile(SD, "/voo2.txt", charVal); 
           appendFile(SD, "/voo2.txt", ":"); 
           dtostrf(gps.location.lat(), 4, 3, charVal); 
@@ -233,9 +236,10 @@ void loop()
       {
         if (gps.location.isValid() && gps.altitude.isValid() && gps.speed.isValid())
         {
-          SerialBT.print("%lu:", millis()); //<- checar se funciona
-          SerialBT.print(gps.location.lat());
           dtostrf(millis(), 4, 3, charVal);
+          SerialBT.print(charVal); //<- checar se funciona
+          SerialBT.print(":"); //<- checar se funciona
+          SerialBT.print(gps.location.lat());
           appendFile(SD, "/voo3.txt", charVal); 
           appendFile(SD, "/voo3.txt", ":"); 
           dtostrf(gps.location.lat(), 4, 3, charVal); 

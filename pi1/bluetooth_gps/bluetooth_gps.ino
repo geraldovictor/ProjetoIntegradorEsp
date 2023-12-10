@@ -6,6 +6,10 @@
  * For more detail (instruction and wiring diagram), visit https://esp32io.com/tutorials/esp32-gps
  */
 
+/* outros links :
+https://www.arduino.cc/reference/en/language/variables/data-types/stringobject/
+*/
+
 #include <TinyGPS++.h>
 #include "BluetoothSerial.h"
 #include "FS.h"
@@ -17,7 +21,15 @@
 char charVal[10];
 TinyGPSPlus gps; // the TinyGPS++ object
 BluetoothSerial SerialBT;
-const char turnON = 'a';
+const char turnONVoo1 = '1';
+const char turnONVoo2 = '2';
+const char turnONVoo3 = '3';
+const char turnONVoo4 = '4';
+const char turnONVoo5 = '5';
+const char turnONVoo6 = '6';
+const char turnONVoo7 = '7';
+const char turnONVoo8 = '8';
+const char turnONVoo9 = '9';
 const char turnOFF = 'b';
 
 void writeFile(fs::FS &fs, const char *path, const char *message)
@@ -100,19 +112,32 @@ void setup()
   {
     SerialBT.println("UNKNOWN");
   }
-  writeFile(SD, "/teste.txt", "");
+  writeFile(SD, "/voo1.txt", "");
+  writeFile(SD, "/voo2.txt", "");
+  writeFile(SD, "/voo3.txt", "");
+  writeFile(SD, "/voo4.txt", "");
+  writeFile(SD, "/voo5.txt", "");
+  writeFile(SD, "/voo6.txt", "");
+  writeFile(SD, "/voo7.txt", "");
+  writeFile(SD, "/voo8.txt", "");
+  writeFile(SD, "/voo9.txt", "");
 }
 
 void loop()
 {
-  char message;
+  char message = turnOFF; 
+  char path[10];  // char[10] para armazenar "/vooX.txt" onde X é de 1 a 9
 
   if (SerialBT.available())
   {
     message = SerialBT.read();
     Serial.write(message);
+    if (message != turnOFF){
+      snprintf(path, sizeof(path), "/voo%c.txt", message);    //define path = "/vooX.txt" onde X é de 1 a 9
+      appendFile(SD, path, "__________\n"); // separa 2 testes feitos em um mesmo arquivo
+    }
   }
-  while (message == turnON)
+  while (message != turnOFF)
   {
     if (Serial2.available() > 0)
     {
@@ -121,28 +146,34 @@ void loop()
       {
         if (gps.location.isValid() && gps.altitude.isValid() && gps.speed.isValid())
         {
+          dtostrf(millis(), 4, 3, charVal);
+          SerialBT.print(charVal); //<- checar se funciona
+          SerialBT.print(":"); //<- checar se funciona
           SerialBT.print(gps.location.lat());
-          dtostrf(gps.location.lat(), 4, 3, charVal); // escrita no arquivo
-          appendFile(SD, "/teste.txt", charVal);
+          dtostrf(millis(), 4, 3, charVal);
+          appendFile(SD, path, charVal); 
+          appendFile(SD, path, ":"); 
+          dtostrf(gps.location.lat(), 4, 3, charVal); 
+          appendFile(SD, path, charVal);
           SerialBT.print(",");
-          appendFile(SD, "/teste.txt", ",");
+          appendFile(SD, path, ",");
           SerialBT.println(gps.location.lng());
           dtostrf(gps.location.lng(), 4, 3, charVal);
-          appendFile(SD, "/teste.txt", charVal); // prints no terminal bt
+          appendFile(SD, path, charVal); 
           SerialBT.print(",");
-          appendFile(SD, "/teste.txt", ",");
+          appendFile(SD, path, ",");
           SerialBT.println(gps.altitude.meters());
           dtostrf(gps.altitude.meters(), 4, 3, charVal);
-          appendFile(SD, "/teste.txt", charVal);
+          appendFile(SD, path, charVal);
           SerialBT.print(",");
-          appendFile(SD, "/teste.txt", ",");
+          appendFile(SD, path, ",");
           SerialBT.print(gps.speed.kmph());
           dtostrf(gps.speed.kmph(), 4, 3, charVal);
-          appendFile(SD, "/teste.txt", charVal);
-          appendFile(SD, "/teste.txt", "\n");
+          appendFile(SD, path, charVal);
+          appendFile(SD, path, "\n");
         }
         else
-          SerialBT.println("Locatizacao, altitude, velocidade inválidas");
+          SerialBT.println("Locatizacao, altitude ou velocidade inválidas");
       }
     }
 
@@ -151,7 +182,7 @@ void loop()
 
     if (SerialBT.available())
     {
-      if( SerialBT.read() == turnOFF)
+      if(SerialBT.read() == turnOFF)
       {
         message = turnOFF;
         Serial.write(message);

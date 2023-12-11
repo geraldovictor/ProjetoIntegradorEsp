@@ -21,15 +21,6 @@ https://www.arduino.cc/reference/en/language/variables/data-types/stringobject/
 char charVal[10];
 TinyGPSPlus gps; // the TinyGPS++ object
 BluetoothSerial SerialBT;
-const char turnONVoo1 = '1';
-const char turnONVoo2 = '2';
-const char turnONVoo3 = '3';
-const char turnONVoo4 = '4';
-const char turnONVoo5 = '5';
-const char turnONVoo6 = '6';
-const char turnONVoo7 = '7';
-const char turnONVoo8 = '8';
-const char turnONVoo9 = '9';
 const char turnOFF = 'b';
 
 void writeFile(fs::FS &fs, const char *path, const char *message)
@@ -112,15 +103,6 @@ void setup()
   {
     SerialBT.println("UNKNOWN");
   }
-  writeFile(SD, "/voo1.txt", "");
-  writeFile(SD, "/voo2.txt", "");
-  writeFile(SD, "/voo3.txt", "");
-  writeFile(SD, "/voo4.txt", "");
-  writeFile(SD, "/voo5.txt", "");
-  writeFile(SD, "/voo6.txt", "");
-  writeFile(SD, "/voo7.txt", "");
-  writeFile(SD, "/voo8.txt", "");
-  writeFile(SD, "/voo9.txt", "");
 }
 
 void loop()
@@ -132,12 +114,10 @@ void loop()
   {
     message = SerialBT.read();
     Serial.write(message);
-    if (message != turnOFF){
-      snprintf(path, sizeof(path), "/voo%c.txt", message);    //define path = "/vooX.txt" onde X é de 1 a 9
-      appendFile(SD, path, "__________\n"); // separa 2 testes feitos em um mesmo arquivo
-    }
+    snprintf(path, sizeof(path), "/voo%c.txt", message);    //define path = "/vooX.txt" onde X é de 1 a 9
   }
-  while (message != turnOFF)
+
+  while (message == '1' || message == '2' || message == '3' || message == '4' || message == '5' || message == '6' || message == '7' || message == '8' || message == '9')
   {
     if (Serial2.available() > 0)
     {
@@ -185,7 +165,7 @@ void loop()
       if(SerialBT.read() == turnOFF)
       {
         message = turnOFF;
-        Serial.write(message);
+        Serial.write(message);  
       }
     }
   }
